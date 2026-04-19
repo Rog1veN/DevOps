@@ -17,23 +17,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Use Node.js 22 # Atualizei para 22 para sumir o aviso
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
+
+      - name: Debug Estrutura
+        run: |
+          echo "Onde estou:"
+          pwd
+          echo "Conteúdo da raiz:"
+          ls -F
+          echo "Conteúdo da pasta projeto:"
+          ls -F projeto/
 
       - name: Install dependencies
-        # Forçamos a entrada na pasta projeto
-        run: cd projeto && npm install
+        run: |
+          cd projeto
+          npm install
 
       - name: Build with Next.js
-        # Forçamos a entrada na pasta projeto para o build
-        run: cd projeto && npx next build
+        run: |
+          cd projeto
+          npx next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # O artefato final estará dentro de projeto/out
           path: ./projeto/out
 
   deploy:
