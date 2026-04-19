@@ -1,4 +1,4 @@
-Valor = Valor = int(input())
+Valor = int(input())
 if (Valor%2) == 0:
     Impar1 = (Valor + 1)
     Impar2 = (Impar1 + 2)
@@ -8,7 +8,7 @@ if (Valor%2) == 0:
     Impar6 = (Impar5 + 2)
 
 if (Valor%2) != 0:
-    Impar1 = (Valor + 1)
+    Impar1 = (Valor)
     Impar2 = (Impar1 + 2)
     Impar3 = (Impar2 + 2)
     Impar4 = (Impar3 + 2)
