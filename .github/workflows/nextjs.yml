@@ -2,17 +2,13 @@ name: Deploy Next.js site to Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "feat/projeto-next"]
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -21,47 +17,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          # Verificamos os arquivos apontando diretamente para a pasta projeto
-          if [ -f "projeto/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "projeto/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Erro: Arquivos do projeto não encontrados na pasta /projeto"
-            exit 1
-          fi
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: 'npm'
           cache-dependency-path: 'projeto/package-lock.json'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Install dependencies
-        # Entramos na pasta e instalamos
-        run: cd projeto && npm ci
+        # Forçamos a entrada na pasta projeto
+        run: cd projeto && npm install
 
       - name: Build with Next.js
-        # Entramos na pasta e buildamos
+        # Forçamos a entrada na pasta projeto para o build
         run: cd projeto && npx next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # O caminho do artefato precisa ser exato a partir da raiz
+          # O artefato final estará dentro de projeto/out
           path: ./projeto/out
 
   deploy:
