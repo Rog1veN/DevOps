@@ -1,35 +1,22 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
 name: Deploy Next.js site to Pages
 
 on:
-  # Roda ao fazer push na branch main
   push:
     branches: ["main"]
-
-  # Permite rodar manualmente pela aba Actions
   workflow_dispatch:
 
-# Define as permissões necessárias para o deploy no GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Garante que apenas um deploy aconteça por vez
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Job de Build
   build:
     runs-on: ubuntu-latest
-    
-    # Define que todos os comandos 'run' rodam dentro da pasta 'projeto'
-    defaults:
-      run:
-        working-directory: ./projeto
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,18 +24,19 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         run: |
-          if [ -f "yarn.lock" ]; then
+          # Verificamos os arquivos apontando diretamente para a pasta projeto
+          if [ -f "projeto/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "package.json" ]; then
+          elif [ -f "projeto/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "Unable to determine package manager"
+            echo "Erro: Arquivos do projeto não encontrados na pasta /projeto"
             exit 1
           fi
 
@@ -57,36 +45,25 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # Caminho para o lock file relativo à raiz do repositório
           cache-dependency-path: 'projeto/package-lock.json'
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
-
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            projeto/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('projeto/package-lock.json', 'projeto/yarn.lock') }}-${{ hashFiles('projeto/**/*.[jt]s', 'projeto/**/*.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('projeto/package-lock.json', 'projeto/yarn.lock') }}-
 
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        # Entramos na pasta e instalamos
+        run: cd projeto && npm ci
 
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        # Entramos na pasta e buildamos
+        run: cd projeto && npx next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # O upload deve apontar para a pasta out dentro de projeto
+          # O caminho do artefato precisa ser exato a partir da raiz
           path: ./projeto/out
 
-  # Job de Deployment
   deploy:
     environment:
       name: github-pages
