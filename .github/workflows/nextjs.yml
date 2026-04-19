@@ -2,8 +2,7 @@ name: Deploy Next.js site to Pages
 
 on:
   push:
-    # Mudamos para a branch que tem a pasta 'projeto'
-    branches: ["feat/projeto-next"] 
+    branches: ["feat/projeto-next"]
   workflow_dispatch:
 
 permissions:
@@ -17,9 +16,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          # Isso garante que ele pegue a branch certa
-          ref: feat/projeto-next 
 
       - name: Setup Node
         uses: actions/setup-node@v4
