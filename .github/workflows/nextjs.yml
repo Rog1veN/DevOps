@@ -21,11 +21,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: 'npm' # Ativa cache para instalar mais rápido
+          cache-dependency-path: './projeto/package-lock.json'
 
-      - name: Install and Build
+      - name: Install Dependencies
         run: |
           cd projeto
           npm install
+
+      # --- INSERÇÃO DOS TESTES ---
+      - name: Run Tests
+        run: |
+          cd projeto
+          npm test -- --watchAll=false # Roda os testes e encerra (não fica esperando)
+      # ---------------------------
+
+      - name: Build Project
+        run: |
+          cd projeto
           npx next build
 
       - name: Upload artifact
@@ -43,11 +56,11 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Integração com Discord
+      # Integração com Discord (roda apenas se o deploy terminar)
       - name: Discord Commits
+        if: always() # Garante que avise mesmo se falhar, ou remova se quiser aviso só de sucesso
         uses: Sniddl/discord-commits@v1.8
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           template: "avatar-with-link"
           include-extras: true
-##test

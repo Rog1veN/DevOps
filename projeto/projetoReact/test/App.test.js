@@ -1,8 +1,14 @@
-import { render, screen } from '@testing-library/react';
-import App from './src/App';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
 
-test('renders learn react link', () => {
+test('Verifica se o botão de entrar está na tela', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const botao = screen.getByRole('button', { name: /entrar na conta/i });
+  expect(botao).toBeInTheDocument(); // O nosso "assert"
+});
+
+test('Verifica se o input de usuário existe', () => {
+  render(<App />);
+  const input = screen.getByPlaceholderText(/digite seu usuário/i);
+  expect(input).toBeInTheDocument();
 });
