@@ -43,7 +43,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-     # Integração com Discord
+      # Integração com Discord
       - name: Discord Commits
         uses: Sniddl/discord-commits@v1.8
         with:

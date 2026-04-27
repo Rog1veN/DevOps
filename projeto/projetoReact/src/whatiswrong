@@ -1,0 +1,27 @@
+import { useState } from 'react';
+import "./App.css";
+
+const ValidarCredenciais = (email,senha) => {
+  if ((!email !== "eduardo.lino@pucpr.br") || (!senha !== "123456"))
+  return ( 
+    <div className="App">
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={vetor} onChange={handleChange}/>
+        <button type="submit">Acessar</button>
+      </form>
+      <p>Acessado com sucesso!</p>
+    </div>
+  );
+  else
+  return (
+    <div className="App">
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={vetor} onChange={handleChange}/>
+        <button type="submit">Acessar</button>
+      </form>
+      <p>Usuário ou senha incorretos!</p>
+    </div>
+  );
+}
+  
+export default App;
