@@ -1,4 +1,4 @@
-name: Deploy Next.js site to Pages
+name: Deploy Projeto Firebase React
 
 on:
   push:
@@ -11,8 +11,12 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./projeto/projetoReact # Define a pasta raiz para todos os comandos
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,33 +25,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: 'npm' # Ativa cache para instalar mais rápido
-          cache-dependency-path: './projeto/package-lock.json'
+          cache: 'npm'
+          cache-dependency-path: './projeto/projetoReact/package-lock.json'
 
       - name: Install Dependencies
-        run: |
-          cd projeto
-          npm install
+        run: npm install
 
-      # --- INSERÇÃO DOS TESTES ---
       - name: Run Tests
-        run: |
-          cd projeto
-          npm test -- --watchAll=false # Roda os testes e encerra (não fica esperando)
-      # ---------------------------
+        run: npm test -- --watchAll=false
 
       - name: Build Project
-        run: |
-          cd projeto
-          npx next build
+        run: npx next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./projeto/out
+          path: ./projeto/projetoReact/out
 
   deploy:
-    needs: build
+    needs: build-and-test
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -56,13 +52,9 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Integração com Discord (roda apenas se o deploy terminar)
-      - name: Discord Commits
-        if: always() # Garante que avise mesmo se falhar, ou remova se quiser aviso só de sucesso
+      - name: Discord Notification
+        if: always()
         uses: Sniddl/discord-commits@v1.8
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           template: "avatar-with-link"
-
-          include-extras: true
-
