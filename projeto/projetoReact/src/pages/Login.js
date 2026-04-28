@@ -52,7 +52,6 @@ function Login() {
             required
           />
         </div>
-// trigger deploy v2
         <button type="submit">Entrar na conta</button>
         
         {/* Mensagem de erro caso a validação falhe */}
