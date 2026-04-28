@@ -35,13 +35,12 @@ jobs:
         run: npm test -- --watchAll=false
 
       - name: Build Project
-        run: npx next build
+        run: npm run build # Agora usa o react-scripts build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./projeto/projetoReact/out
-
+          path: ./projeto/projetoReact/build
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
