@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { auth } from '../firebaseConfig'; // Sua config do Firebase
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
-import "../App.css"; // Mantendo seu CSS original
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -22,7 +21,6 @@ function Login() {
     } catch (error) {
       // Se os dados estiverem incorretos ou usuário não existir
       setMensagem("Usuário não cadastrado ou senha incorreta!");
-      console.error("Erro no login:", error.code);
     }
   };
 
@@ -52,6 +50,7 @@ function Login() {
             required
           />
         </div>
+
         <button type="submit">Entrar na conta</button>
         
         {/* Mensagem de erro caso a validação falhe */}
