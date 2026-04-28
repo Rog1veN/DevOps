@@ -5,7 +5,7 @@ import Main from './pages/Main';
 
 function AppRoutes() {
   return (
-    <HashRouter> {/* Trocamos BrowserRouter por HashRouter */}
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
